@@ -34,7 +34,16 @@ import java.text.NumberFormat;
  */
 public class PaperImageCreator {
 
+    private static BufferedImage lastImage;
+    private static BigDecimal lastValue;
+
     public static BufferedImage createImage() throws IOException {
+        // Cache controll
+        if (lastValue != null && lastValue.equals(PaperValue.value())) {
+            return lastImage;
+        }
+
+        // Creates a new image
         BufferedImage image = ImageFactory.empty(64, 64).toBufferedImage();
         Graphics2D g = image.createGraphics();
         g.clearRect(0, 0, 64, 64);
@@ -54,6 +63,9 @@ public class PaperImageCreator {
         g.drawString(value.signum() == -1 ? "-" : "" + NumberFormat.getInstance().format(value.toBigInteger()) + ",", 22, 34);
         g.drawString(NumberFormat.getInstance().format(value.remainder(BigDecimal.ONE)), 5, 56);
 
+        // Saves a memory cache
+        lastImage = image;
+        lastValue = PaperValue.value();
         return image;
     }
 

@@ -28,6 +28,10 @@ import javax.swing.WindowConstants;
  */
 public class Main {
 
+    public static final boolean debugging() {
+        return false;
+    }
+
     public static void main(String[] args) {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {

@@ -49,7 +49,7 @@ public class PaperValue {
         get().value = value;
     }
 
-    public static PaperValue get() {
+    private static PaperValue get() {
         if (instance == null) {
             instantiate();
         }

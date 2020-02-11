@@ -26,6 +26,9 @@ import javax.swing.JFrame;
  */
 public class MonitorThread implements Runnable {
 
+    private static final int DELAY = 12000;
+    private static final int SLEEP_TIME = 100;
+
     private static Thread monitorThread;
     private final JFrame mainWindow;
 
@@ -45,11 +48,17 @@ public class MonitorThread implements Runnable {
 
     @Override
     public void run() {
+        final int targetCount = DELAY / SLEEP_TIME;
+        int count = targetCount;
         while (true) {
             try {
-                MonitorValueUpdater.updateValue();
+                if (--count == 0) {
+                    count = targetCount;
+                    MonitorValueUpdater.updateValue();
+                    System.out.println("ACONTECEU");
+                }
                 mainWindow.setIconImage(PaperImageCreator.createImage());
-                Thread.sleep(1000);
+                Thread.sleep(SLEEP_TIME);
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);
             }

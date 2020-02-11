@@ -16,6 +16,8 @@
  */
 package br.com.jpe.stm.monitor;
 
+import br.com.jpe.stm.Main;
+import br.com.jpe.stm.monitor.api.AlphaVantageApi;
 import br.com.jpe.stm.paper.PaperValue;
 import java.math.BigDecimal;
 import java.util.Random;
@@ -31,15 +33,17 @@ public class MonitorValueUpdater {
         PaperValue.updateValue(getNewValue());
     }
 
-    // TODO (10/02/2020): unrandomize and get from AlphaVantage WS
-    // TODO (10/02/2020): unrandomize and get from AlphaVantage WS
-    // TODO (10/02/2020): unrandomize and get from AlphaVantage WS
     private static BigDecimal getNewValue() {
-        final Random r = new Random();
-        BigDecimal nextNumber = new BigDecimal(r.nextFloat());
-        return (r.nextBoolean() || r.nextBoolean())
-                ? PaperValue.value().add(nextNumber)
-                : PaperValue.value().subtract(nextNumber);
+        // Random stuff to make tests more agile
+        if (Main.debugging()) {
+            final Random r = new Random();
+            BigDecimal nextNumber = new BigDecimal(r.nextFloat());
+            return (r.nextBoolean() || r.nextBoolean()) // 66% true chance
+                    ? PaperValue.value().add(nextNumber) // true goes up
+                    : PaperValue.value().subtract(nextNumber); // false goes down
+        }
+        // Value not found
+        return new BigDecimal(AlphaVantageApi.getPrice().orElse("0"));
     }
 
 }
