@@ -16,12 +16,15 @@
  */
 package br.com.jpe.stm.monitor;
 
-import javax.swing.ImageIcon;
+import br.com.jpe.stm.img.PaperImageCreator;
 import javax.swing.JFrame;
 
+/**
+ * A thread to monitor changes on the stock price and update UI
+ *
+ * @author joaovperin
+ */
 public class MonitorThread implements Runnable {
-
-    private static final String IMAGES_DIR = System.getProperty("user.home") + "\\Pictures\\StockPaperPictures\\";
 
     private static Thread monitorThread;
     private final JFrame mainWindow;
@@ -42,16 +45,13 @@ public class MonitorThread implements Runnable {
 
     @Override
     public void run() {
-        int num = 1;
         while (true) {
-            final String img_1 = "paper-";
-            mainWindow.setIconImage(new ImageIcon(IMAGES_DIR.concat(img_1 + num + ".png")).getImage());
             try {
+                MonitorValueUpdater.updateValue();
+                mainWindow.setIconImage(PaperImageCreator.createImage());
                 Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-            }
-            if (++num == 3) {
-                num = 1;
+            } catch (Exception ex) {
+                ex.printStackTrace(System.err);
             }
         }
     }

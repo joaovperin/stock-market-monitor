@@ -21,6 +21,11 @@ import br.com.jpe.stm.monitor.MonitorThread;
 import java.awt.Frame;
 import javax.swing.WindowConstants;
 
+/**
+ * Main class
+ *
+ * @author joaovperin
+ */
 public class Main {
 
     public static void main(String[] args) {
