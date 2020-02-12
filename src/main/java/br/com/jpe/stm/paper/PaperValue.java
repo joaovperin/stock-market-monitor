@@ -27,9 +27,14 @@ public class PaperValue {
 
     private static PaperValue instance;
 
-    private final String name = "MGLU3";
+//    private String name = "MGLU3";
+    private String name = "BOVA11";
     private Long time = System.currentTimeMillis();
-    private BigDecimal value;
+    private BigDecimal value = BigDecimal.ZERO;
+
+    public static void name(String name) {
+        get().name = name;
+    }
 
     public static String name() {
         return get().name;
@@ -60,10 +65,6 @@ public class PaperValue {
         if (instance == null) {
             instance = new PaperValue();
         }
-    }
-
-    public PaperValue() {
-        this.value = BigDecimal.valueOf(58.32f);
     }
 
 }

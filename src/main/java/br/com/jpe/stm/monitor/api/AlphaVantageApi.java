@@ -16,6 +16,7 @@
  */
 package br.com.jpe.stm.monitor.api;
 
+import br.com.jpe.stm.paper.PaperValue;
 import br.com.jpe.stm.utils.StmProperties;
 import java.io.IOException;
 import java.net.URI;
@@ -36,14 +37,16 @@ import java.time.Duration;
  */
 public class AlphaVantageApi {
 
-    private static final String BASE_URI = "https://www.alphavantage.co/query";
+    private static final String BASE_URI = "http://www.alphavantage.co/query";
 
     // TODO (11/02/2020): Use CompletableFutures!
     //symbol,open,high,low,price,volume,latestDay,previousClose,change,changePercent
     public static AlphaVantageApiResult query(String key) {
         HttpClient httpClient = HttpClient.newHttpClient();
         try {
-            HttpResponse<String> response = httpClient.send(createHttpRequest(), BodyHandlers.ofString());
+            HttpRequest httpRequest = createHttpRequest();
+            System.out.println(httpRequest.uri());
+            HttpResponse<String> response = httpClient.send(httpRequest, BodyHandlers.ofString());
             return AlphaVantageApiResult.from(response.body());
         } catch (IOException | InterruptedException ex) {
             ex.printStackTrace(System.err);
@@ -55,6 +58,7 @@ public class AlphaVantageApi {
         try {
             return new Builder()
                     .function(Function.GLOBAL_QUOTE)
+                    .symbol(PaperValue.name())
                     .apiKey(StmProperties.API_KEY.value())
                     .build();
         } catch (URISyntaxException e) {
@@ -65,9 +69,8 @@ public class AlphaVantageApi {
     public static final class Builder {
 
         private String function = Function.TIME_SERIES_INTRADAY.name();
-        private String symbol = "MGLU3.SAO";
-        private String interval = "1min";
-        private String apiKey = "demo";
+        private String symbol;
+        private String apiKey;
 
         public Builder function(Function function) {
             this.function = function.name();
@@ -76,11 +79,6 @@ public class AlphaVantageApi {
 
         public Builder symbol(String symbol) {
             this.symbol = symbol.concat(".SAO");
-            return this;
-        }
-
-        public Builder interval(String interval) {
-            this.interval = interval;
             return this;
         }
 
@@ -93,13 +91,12 @@ public class AlphaVantageApi {
             return HttpRequest.newBuilder()
                     .GET()
                     .timeout(Duration.ofSeconds(10L))
+                    //https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=MSFT&apikey=demo&datatype=csv
                     .uri(new URI(new StringBuilder(BASE_URI).append('?')
-                            //                            .append("outputsize=").append("compact")
-                            .append("&function=").append(function)
+                            .append("function=").append(function)
                             .append("&symbol=").append(symbol)
-                            .append("&datatype=").append("csv")
-                            .append("&interval=").append(interval)
                             .append("&apikey=").append(apiKey)
+                            .append("&datatype=").append("csv")
                             .toString())).build();
         }
 

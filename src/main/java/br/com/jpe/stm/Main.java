@@ -17,8 +17,11 @@
 package br.com.jpe.stm;
 
 import br.com.jpe.stm.gui.MainWindow;
+import br.com.jpe.stm.img.PaperImageCreator;
 import br.com.jpe.stm.monitor.MonitorThread;
+import br.com.jpe.stm.paper.PaperValue;
 import java.awt.Frame;
+import java.io.IOException;
 import javax.swing.WindowConstants;
 
 /**
@@ -33,12 +36,20 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        // First argument is the paper name, if provided
+        if (args != null && args.length > 0) {
+            PaperValue.name(args[0]);
+        }
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             MainWindow mainWindow = new MainWindow();
             mainWindow.setState(Frame.ICONIFIED);
             mainWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             mainWindow.setVisible(true);
+            try {
+                mainWindow.setIconImage(PaperImageCreator.createImage());
+            } catch (IOException ex) {
+            }
             // Start the monitor thread
             MonitorThread.startMonitor(mainWindow);
         });

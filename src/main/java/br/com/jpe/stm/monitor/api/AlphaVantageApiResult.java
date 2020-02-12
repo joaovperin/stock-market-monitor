@@ -55,7 +55,7 @@ public class AlphaVantageApiResult {
         //symbol,open,high,low,price,volume,latestDay,previousClose,change,changePercent
         //MGLU3.SAO,53.2000,54.8000,51.7300,54.2700,9488700,2020-02-11,52.3800,1.8900,3.6082%
         //
-        var map = new TreeMap<String, String>();
+        Map<String, String> map = new TreeMap<>();
         if (csvBody != null && !csvBody.isBlank()) {
             String[] split = csvBody.split("\n");
             String[] keys = split[0].split(","), values = split[1].split(",");

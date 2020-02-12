@@ -17,6 +17,7 @@
 package br.com.jpe.stm.monitor;
 
 import br.com.jpe.stm.img.PaperImageCreator;
+import java.io.IOException;
 import javax.swing.JFrame;
 
 /**
@@ -26,7 +27,7 @@ import javax.swing.JFrame;
  */
 public class MonitorThread implements Runnable {
 
-    private static final int DELAY = 1200;
+    private static final int DELAY = 12000;
     private static final int SLEEP_TIME = 100;
 
     private static Thread monitorThread;
@@ -53,6 +54,11 @@ public class MonitorThread implements Runnable {
     public void run() {
         final int targetCount = DELAY / SLEEP_TIME;
         int count = targetCount;
+        try {
+            MonitorValueUpdater.updateValue();
+            mainWindow.setIconImage(PaperImageCreator.createImage());
+        } catch (IOException ex) {
+        }
         while (true) {
             // Exit paragraph
             if (!isRunning) {
@@ -62,9 +68,9 @@ public class MonitorThread implements Runnable {
                 if (--count == 0) {
                     count = targetCount;
                     MonitorValueUpdater.updateValue();
+                    mainWindow.setIconImage(PaperImageCreator.createImage());
                     System.out.println("Updated!");
                 }
-                mainWindow.setIconImage(PaperImageCreator.createImage());
                 Thread.sleep(SLEEP_TIME);
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);
