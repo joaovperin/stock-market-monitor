@@ -20,5 +20,14 @@
             <version>1.0-snapshot</version>
         </dependency>
     </dependencies>
+    
+    <!-- Distribution settings -->
+    <distributionManagement>        
+        <repository>
+            <id>github-stock-market-monitor</id>
+            <name>A simple monitor for stock market papers</name>
+            <url>https://maven.pkg.github.com/joaovperin/stock-market-monitor</url>
+        </repository>
+    </distributionManagement>
         
 </project>
