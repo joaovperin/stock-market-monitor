@@ -25,6 +25,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.NumberFormat;
 
 /**
@@ -60,13 +61,22 @@ public class PaperImageCreator {
 
         BigDecimal value = PaperValue.value();
         g.setFont(new Font(Font.MONOSPACED, Font.BOLD, 19));
-        g.drawString(value.signum() == -1 ? "-" : "" + NumberFormat.getInstance().format(value.toBigInteger()) + ",", 22, 34);
-        g.drawString(NumberFormat.getInstance().format(value.remainder(BigDecimal.ONE)), 5, 56);
+        String fmtInteger = fmtInteger(value), fmtDecimal = fmtDecimal(value);
+        g.drawString(value.signum() == -1 ? "-" : "" + fmtInteger, 1 + 7 * (5 - fmtInteger.length()), 34); //3=15, 2=22, 1=29
+        g.drawString(fmtDecimal, 12, 56);
 
         // Saves a memory cache
         lastImage = image;
         lastValue = PaperValue.value();
         return image;
+    }
+
+    private static String fmtDecimal(BigDecimal value) {
+        return NumberFormat.getInstance().format(value.remainder(BigDecimal.ONE).setScale(2, RoundingMode.DOWN)).substring(1);
+    }
+
+    private static String fmtInteger(BigDecimal value) {
+        return NumberFormat.getInstance().format(value.toBigInteger());
     }
 
 }

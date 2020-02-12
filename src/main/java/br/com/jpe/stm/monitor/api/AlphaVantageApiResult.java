@@ -22,6 +22,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A class to represent the result of a query
+ * 
+ * // NEVER USED YET
  *
  * @author joaovperin
  */
