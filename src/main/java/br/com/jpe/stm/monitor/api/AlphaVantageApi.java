@@ -25,9 +25,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
 
 /**
  *
@@ -42,36 +39,16 @@ public class AlphaVantageApi {
     private static final String BASE_URI = "https://www.alphavantage.co/query";
 
     // TODO (11/02/2020): Use CompletableFutures!
-    public static Optional<String> getPrice() {
-        return get("price");
-    }
-
     //symbol,open,high,low,price,volume,latestDay,previousClose,change,changePercent
-    private static Optional<String> get(String key) {
+    public static AlphaVantageApiResult query(String key) {
         HttpClient httpClient = HttpClient.newHttpClient();
         try {
             HttpResponse<String> response = httpClient.send(createHttpRequest(), BodyHandlers.ofString());
-            return Optional.ofNullable(transformToMap(response.body()).get(key));
+            return AlphaVantageApiResult.from(response.body());
         } catch (IOException | InterruptedException ex) {
             ex.printStackTrace(System.err);
         }
-        return Optional.empty();
-    }
-
-    private static Map<String, String> transformToMap(String csvBody) {
-        //
-        //symbol,open,high,low,price,volume,latestDay,previousClose,change,changePercent
-        //MGLU3.SAO,53.2000,54.8000,51.7300,54.2700,9488700,2020-02-11,52.3800,1.8900,3.6082%
-        //
-        var map = new TreeMap<String, String>();
-        if (csvBody != null && !csvBody.isBlank()) {
-            String[] split = csvBody.split("\n");
-            String[] keys = split[0].split(","), values = split[1].split(",");
-            for (int i = 0; i < keys.length && i < values.length; i++) {
-                map.put(keys[i], values[i]);
-            }
-        }
-        return map;
+        return AlphaVantageApiResult.empty();
     }
 
     private static HttpRequest createHttpRequest() {

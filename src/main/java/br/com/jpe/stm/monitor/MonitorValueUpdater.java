@@ -43,7 +43,7 @@ public class MonitorValueUpdater {
                     : PaperValue.value().subtract(nextNumber); // false goes down
         }
         // Value not found
-        return new BigDecimal(AlphaVantageApi.getPrice().orElse("0"));
+        return AlphaVantageApi.query(PaperValue.name()).getPrice();
     }
 
 }
