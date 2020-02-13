@@ -27,9 +27,7 @@ public class PaperValue {
 
     private static PaperValue instance;
 
-//    private String name = "MGLU3";
     private String name = "BOVA11";
-    private Long time = System.currentTimeMillis();
     private BigDecimal value = BigDecimal.ZERO;
 
     public static void name(String name) {
@@ -40,17 +38,11 @@ public class PaperValue {
         return get().name;
     }
 
-    public static long lastUpdateTime() {
-        return get().time;
-    }
-
     public static BigDecimal value() {
         return get().value;
     }
 
-    public static void updateValue(BigDecimal value) {
-        Long now = System.currentTimeMillis();
-        get().time = now;
+    public static void value(BigDecimal value) {
         get().value = value;
     }
 

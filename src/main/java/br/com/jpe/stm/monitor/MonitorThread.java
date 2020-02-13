@@ -17,7 +17,9 @@
 package br.com.jpe.stm.monitor;
 
 import br.com.jpe.stm.img.PaperImageCreator;
-import java.io.IOException;
+import br.com.jpe.stm.monitor.api.Api;
+import br.com.jpe.stm.paper.PaperValue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JFrame;
 
 /**
@@ -27,7 +29,7 @@ import javax.swing.JFrame;
  */
 public class MonitorThread implements Runnable {
 
-    private static final int DELAY = 12000;
+    private static final int DELAY = 1200;
     private static final int SLEEP_TIME = 100;
 
     private static Thread monitorThread;
@@ -53,28 +55,30 @@ public class MonitorThread implements Runnable {
     @Override
     public void run() {
         final int targetCount = DELAY / SLEEP_TIME;
-        int count = targetCount;
-        try {
-            MonitorValueUpdater.updateValue();
-            mainWindow.setIconImage(PaperImageCreator.createImage());
-        } catch (IOException ex) {
-        }
+        int count = 0;
+        final AtomicBoolean isUpdating = new AtomicBoolean(false);
         while (true) {
-            // Exit paragraph
+            // Exit paragraph if not running
             if (!isRunning) {
                 return;
             }
-            try {
-                if (--count == 0) {
-                    count = targetCount;
-                    MonitorValueUpdater.updateValue();
-                    mainWindow.setIconImage(PaperImageCreator.createImage());
-                    System.out.println("Updated!");
+            // If reaches the targetCount, resets the counter and do the magic
+            if (--count <= 0) {
+                count = targetCount;
+                if (!isUpdating.get()) {
+                    isUpdating.set(true);
+                    Api.instance().query(PaperValue.name()).thenAccept(result -> {
+                        PaperValue.value(result.price());
+                        mainWindow.setIconImage(PaperImageCreator.createImage(PaperValue.name(), PaperValue.value()));
+                    }).whenComplete((result, ex) -> isUpdating.set(false));
                 }
-                Thread.sleep(SLEEP_TIME);
-            } catch (Exception ex) {
-                ex.printStackTrace(System.err);
             }
+            // Sleep, young boy
+            try {
+                Thread.sleep(SLEEP_TIME);
+            } catch (InterruptedException ex) {
+            }
+
         }
     }
 

@@ -21,7 +21,6 @@ import br.com.jpe.stm.img.PaperImageCreator;
 import br.com.jpe.stm.monitor.MonitorThread;
 import br.com.jpe.stm.paper.PaperValue;
 import java.awt.Frame;
-import java.io.IOException;
 import javax.swing.WindowConstants;
 
 /**
@@ -42,16 +41,14 @@ public class Main {
         }
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            MainWindow mainWindow = new MainWindow();
+            final MainWindow mainWindow = new MainWindow();
             mainWindow.setState(Frame.ICONIFIED);
             mainWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             mainWindow.setVisible(true);
-            try {
-                mainWindow.setIconImage(PaperImageCreator.createImage());
-            } catch (IOException ex) {
-            }
-            // Start the monitor thread
-            MonitorThread.startMonitor(mainWindow);
+            // Show the loading bar and start the monitor thread
+            PaperImageCreator.createAndSetInitialImage(mainWindow).thenRun(() -> {
+                MonitorThread.startMonitor(mainWindow);
+            });
         });
     }
 
